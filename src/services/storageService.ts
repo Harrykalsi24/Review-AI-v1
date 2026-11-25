@@ -20,12 +20,14 @@ export const storageService = {
       const logoUrl = (!rawLogo || rawLogo === '/logo.png' || rawLogo === 'logo.png')
         ? DEFAULT_SETTINGS.logoUrl
         : rawLogo;
+      const rawApiKey = parsed.aiApiKey || '';
+      const safeApiKey = rawApiKey.startsWith('sk-d3fND6j3JDF89') ? '' : rawApiKey;
       return {
         ...DEFAULT_SETTINGS,
         ...parsed,
         logoUrl,
         googleReviewUrl: validUrl,
-        aiApiKey: parsed.aiApiKey || DEFAULT_SETTINGS.aiApiKey,
+        aiApiKey: safeApiKey,
         aiBaseUrl: parsed.aiBaseUrl || DEFAULT_SETTINGS.aiBaseUrl,
         aiModel: parsed.aiModel || DEFAULT_SETTINGS.aiModel,
       };

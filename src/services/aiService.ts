@@ -415,6 +415,18 @@ export function generateLocalFallbackReview(
   return sanitizeGeneratedReviewText(review, customText);
 }
 
+const DIRECT_KEY_HOSTS = [
+  'agentrouter.org',
+  'api.openai.com',
+  'openrouter.ai',
+  'api.groq.com',
+  'generativelanguage.googleapis.com',
+];
+
+function requiresDirectApiKey(baseUrl: string): boolean {
+  return DIRECT_KEY_HOSTS.some(host => baseUrl.includes(host));
+}
+
 export async function generateReview(
   data: QuestionnaireData,
   length: ReviewLength,
@@ -424,7 +436,7 @@ export async function generateReview(
   const prompt = buildPrompt(data, length, settings.businessName);
   const customText = data.otherProductText?.trim();
 
-  if (!settings.aiApiKey || !settings.aiBaseUrl) {
+  if (!settings.aiBaseUrl || (!settings.aiApiKey && requiresDirectApiKey(settings.aiBaseUrl))) {
     return {
       text: generateLocalFallbackReview(data, length, settings.businessName),
       isFallback: true,
@@ -434,8 +446,11 @@ export async function generateReview(
   try {
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${settings.aiApiKey}`,
     };
+
+    if (settings.aiApiKey) {
+      headers['Authorization'] = `Bearer ${settings.aiApiKey}`;
+    }
 
     if (settings.aiBaseUrl.includes('openrouter.ai')) {
       headers['HTTP-Referer'] = window.location.origin;
@@ -475,12 +490,17 @@ export async function generateReview(
 }
 
 export async function testApiConnection(settings: AdminSettings): Promise<{ ok: boolean; message: string }> {
-  if (!settings.aiApiKey) return { ok: false, message: 'API key is empty.' };
+  if (!settings.aiBaseUrl) return { ok: false, message: 'API base URL is empty.' };
+  if (!settings.aiApiKey && requiresDirectApiKey(settings.aiBaseUrl)) {
+    return { ok: false, message: 'API key is empty. Use a server-side proxy URL or enter a key.' };
+  }
   try {
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${settings.aiApiKey}`,
     };
+    if (settings.aiApiKey) {
+      headers['Authorization'] = `Bearer ${settings.aiApiKey}`;
+    }
     if (settings.aiBaseUrl.includes('openrouter.ai')) {
       headers['HTTP-Referer'] = window.location.origin;
       headers['X-Title'] = settings.businessName;

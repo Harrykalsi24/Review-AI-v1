@@ -95,7 +95,7 @@ export const DEFAULT_SETTINGS: AdminSettings = {
   logoUrl: LOGO_BASE64,
   googleReviewUrl: 'https://www.google.com/search?sca_esv=b0c5f1cb68949abc&sxsrf=AKL5yDjXKyBwRHZI6l5D_Gr7yVJaVaScPQ:1795345389939&q=modern+electronics+mukerian+reviews&si=AE1YtOqiKPb2pdLXAi8quZ9vbH4aVq_aX8-3H9iFBLpRNK95c5QMlqd4pgBonGaW2_OMYweIHovXhYkdILFdz9FV1GYPDeEu_as-jAA8i7uQkfDu5MN5zRRv6hVZL82TK5tD69XxaqgTTnInXERJcBvntLDBqwi0Sw%3D%3D&sa=X&ved=2ahUKEwiLlN3htpuYAxW7DjQIHQEXBnsQyNoBKAB6BAgeEAA&ictx=1&biw=1366&bih=617&dpr=1',
   aiProvider: 'agentrouter',
-  aiApiKey: (typeof import.meta !== 'undefined' && import.meta.env?.VITE_AI_API_KEY) || '',
+  aiApiKey: '',
   aiBaseUrl: (typeof import.meta !== 'undefined' && import.meta.env?.VITE_AI_BASE_URL) || 'https://agentrouter.org/v1',
   aiModel: (typeof import.meta !== 'undefined' && import.meta.env?.VITE_AI_MODEL) || 'gpt-4o-mini',
   maxTokens: 300,
